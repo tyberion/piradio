@@ -1,0 +1,6 @@
+NPO Radio 1 NL | http://icecast.omroep.nl/radio1-sb-mp3
+NPO Radio 2 NL | http://icecast.omroep.nl/radio2-sb-mp3
+NPO Radio 3 NL | http://icecast.omroep.nl/radio3-sb-mp3
+NPO Radio 4 NL | http://icecast.omroep.nl/radio4-sb-mp3
+NPO Radio 5 NL | http://icecast.omroep.nl/radio5-sb-mp3
+NPO Radio 6 NL | http://icecast.omroep.nl/radio6-sb-mp3
