@@ -1,74 +1,44 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
+import subprocess
+
 from predefines import host, port, stations_file, template_file
+
 # from flask_apscheduler import APScheduler
 from flask import Flask
 from flask import render_template
 from flask import request
-import subprocess
 
-def is_integer(s):
-    try: 
-        int(s)
-        return True
-    except ValueError:
-        return False
-
-def mpc_command(cmd):
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-    return p.stdout.read()
+from mpc import Radio
 
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
-
 def radio_control(name='RPi FM'):
-    stations = []
-    stationURLs = []
-    station_output = ''
-
-    for x in open('stations.txt','r'):
-        a = x.split('|')
-        stations.append(a[0]) 
-        stationURLs.append(a[1].strip())
-
-    current_station = mpc_command('mpc current'.split(' ')).decode('utf-8').strip()
+    radio = Radio()
 
     if request.method == 'POST':
-        if request.form['submit'] == 'turn radio on':
-            p = mpc_command('mpc play'.split(' '))
-        elif request.form['submit'] == 'turn radio off':
-            p = mpc_command('mpc stop'.split(' '))
-        elif request.form['submit'] == 'change':
-            mpc_command(['mpc', 'play', str(request.form['station'])])
-        elif request.form['submit'] == 'update playlist':
-            mpc_command(['mpc', 'clear'])
-            for stationURL in stationURLs:
-                mpc_command(['mpc', 'add', stationURL])
-        # elif request.form['submit'] == '+5':
-            # mpc_command(['mpc', 'volume', '+5'])
-        # elif request.form['submit'] == '-5':
-            # mpc_command(['mpc', 'volume', '-5'])
-        elif request.form['submit'] == 'volume':
-            mpc_command(['mpc', 'volume',request.form['slider-1']])
+        station = request.form['station']
+        volume = request.form['volume_slider']
+        on_off = request.form['on_off_slider'] == 'on'
+        if request.form['submit'] == 'update':
+            radio.volume = volume
+            if on_off:
+                radio.position = int(station)
+            else:
+                radio.stop()
 
-    position = mpc_command(['mpc', '-f', 'position'])
-    # idx = position.decode('utf-8').split('[')
-    # position = idx[0].strip()
-    position = position.decode('utf-8').split('#')[1].split('/')[0]
-
-    if is_integer(position) == False:
-        position = 0
-    for index, station in enumerate(stations, start=1):
+    station_output = ''
+    for index, station in enumerate(radio.station_list, start=1):
         station_output += '<option value="' + str(index) + '" '
-        if index == int(position):
+        if index == int(radio.position):
             station_output += 'selected="selected"'
         station_output += '>' + station + '</option>'
 
-    volume = mpc_command(['mpc', 'volume']).decode('utf-8').replace('volume:', '').replace('%', '').strip()
+    radio_on = not radio.status == 'stopped'
 
-    return render_template(template_file, name=name, stations=station_output.strip(), volume=volume, current_station=current_station)
+    return render_template(template_file, name=name, stations=station_output.strip(), volume=radio.volume, radio_on=radio_on)
 
 if __name__ == '__main__':
     app.run(host=host, port=port, debug=True)

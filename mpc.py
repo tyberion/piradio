@@ -26,19 +26,6 @@ def parse_status(result):
         position = lines[1]
         status['position'] = int(position.split('#')[1].split('/')[0])
         status['status'] = position.split(']')[0].replace('[', '')
-        status_line = lines[2]
-    else:
-        status_line = lines[0]
-    status_line = status_line.split(' ')
-    status_field = ''
-    for line in status_line:
-        if line == '':
-            continue
-        if ':' in line:
-            status_field = line.replace(':', '')
-        else:
-            if '%' in line:
-                status[status_field] = int(line.replace('%', ''))
 
     return status
 
@@ -125,16 +112,16 @@ class Radio():
 
     @property
     def volume(self):
-        result = mpc_command(['status'])
-        status = parse_status(result)
+        result = mpc_command(['volume'])
+        volume = int(result.split(':')[1].replace('%', ''))
         
-        return status['volume']
+        return volume
 
     @volume.setter
     def volume(self, value):
         """mpc volume [+-]<num>
         Set volume to <num> or adjusts by [+-]<num>"""
-        result = mpc_command(['volume', str(value)])
+        mpc_command(['volume', str(value)])
 
     @property
     def error(self):
