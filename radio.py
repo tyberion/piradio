@@ -53,11 +53,10 @@ def radio_control(name='RPi FM'):
         elif request.form['submit'] == 'volume':
             mpc_command(['mpc', 'volume',request.form['slider-1']])
 
-    position = mpc_command(['mpc', '-f', 'position']).decode('utf-8')
-    if '#' in position:
-        # idx = position.decode('utf-8').split('[')
-        # position = idx[0].strip()
-        position = position.split('#')[1].split('/')[0]
+    position = mpc_command(['mpc', '-f', 'position'])
+    # idx = position.decode('utf-8').split('[')
+    # position = idx[0].strip()
+    position = position.decode('utf-8').split('#')[1].split('/')[0]
 
     if is_integer(position) == False:
         position = 0
