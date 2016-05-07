@@ -152,11 +152,11 @@ class Radio():
 if __name__ == '__main__':
 
     station_list = [
-            'http://icecast.omroep.nl/radio1-sb-mp3',
-            'http://icecast.omroep.nl/radio2-sb-mp3',
-            'http://icecast.omroep.nl/radio3-sb-mp3',
-            'http://icecast.omroep.nl/radio4-sb-mp3',
-            'http://icecast.omroep.nl/radio5-sb-mp3',
-            'http://icecast.omroep.nl/radio6-sb-mp3',
+            'http://icecast.omroep.nl/radio1-bb-mp3',
+            'http://icecast.omroep.nl/radio2-bb-mp3',
+            'http://icecast.omroep.nl/3fm-bb-mp3',
+            'http://icecast.omroep.nl/radio4-bb-mp3',
+            'http://icecast.omroep.nl/radio5-bb-mp3',
+            'http://icecast.omroep.nl/radio6-bb-mp3',
             ]
     radio = Radio(station_list)
