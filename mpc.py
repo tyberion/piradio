@@ -11,6 +11,7 @@ def parse_status(result):
     """parses mpc status result"""
     status = {
             'song': '',
+            'station': '',
             'position': 0,
             'status': 'stopped',
             'error': '',
@@ -22,7 +23,14 @@ def parse_status(result):
 
     lines = result.split('\n')
     if len(lines) > 1:
-        status['song'] = lines[0]
+        station = lines[0]
+        if ':' in station:
+            status['song'] = station.split(':')[1].strip()
+            status['station'] = station.split(':')[0].strip()
+            if ' - ' in status['song']:
+                status['song'] = status['song'].split(' - ')[1]
+        else:
+            status['station'] = station
         position = lines[1]
         status['position'] = int(position.split('#')[1].split('/')[0])
         status['status'] = position.split(']')[0].replace('[', '')
@@ -100,8 +108,19 @@ class Radio():
         """mpc playlist [[playlist]]
         Print <playlist>"""
         result = mpc_command(['playlist']).split('\n')
+        stations = [r.split(':')[0] for r in result]
 
-        return result
+        return stations
+
+    @property
+    def song_list(self):
+        """mpc playlist [[playlist]]
+        Print <playlist>"""
+        result = mpc_command(['playlist']).split('\n')
+        songs = [r.split(':')[1] if ':' in r else '' for r in result]
+        songs = [s.split(' - ')[1] if ' - ' in s else s for s in songs]
+
+        return songs
 
     @property
     def status(self):
@@ -131,11 +150,18 @@ class Radio():
         return status['error']
 
     @property
-    def current_station(self):
+    def current_song(self):
         result = mpc_command(['status'])
         status = parse_status(result)
         
         return status['song']
+
+    @property
+    def current_station(self):
+        result = mpc_command(['status'])
+        status = parse_status(result)
+        
+        return status['station']
 
     @property
     def position(self):

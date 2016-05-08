@@ -17,41 +17,42 @@
             {% else %}
                 <h1>Welcome to RPi Radio</h1>
             {% endif %}
-    <!--         <a href="#nav-panel" data-icon="bars" data-iconpos="notext">Menu</a> -->
+            <a href="#nav-panel" data-icon="bars" data-iconpos="notext">Menu</a>
     <!--         <a href="#add-form" data-icon="gear" data-iconpos="notext">Add</a> -->
         </div><!-- /header -->
         <div role="main" class="ui-content jqm-content jqm-fullwidth">
             <form role="form" method="POST" action="/" id="controls">
-                <div data-role="fieldcontain">
-                    <label for="on_off_slider">Radio:</label>
-                    <select name="on_off_slider" id="on_off_slider" data-role="slider">
-                        {% if radio_on %}
-                            <option value="off">Off</option>
-                            <option value="on" selected="selected">On</option>
-                        {% else %}
-                            <option value="off" selected="selected">Off</option>
-                            <option value="on">On</option>
-                        {% endif %}
-                    </select> 
-                </div>
-                <br>
-                <select name="station" onchange="this.form.submit()">
+                <select name="on_off_slider" id="on_off_slider" data-role="slider">
+                    {% if radio_on %}
+                        <option value="off">Off</option>
+                        <option value="on" selected="selected">On</option>
+                    {% else %}
+                        <option value="off" selected="selected">Off</option>
+                        <option value="on">On</option>
+                    {% endif %}
+                </select> 
+                <select name="station">
                     {{ stations|safe }}
                 </select>
-                <br>
+                {% if song %}
+                    <h3>{{ song }}</h3>
+                {% endif %}
                 <input type="range" name="volume_slider" id="volume_slider" value="{{ volume }}", min="0" max="100" data-highlight="true" />
                 <!-- <input type="submit" name="submit" value="-5" /> {{ volume }} -->
                 <input type="submit" name="submit" value="update" />
+                {% if status == "paused" %}
+                    <input type="submit" name="submit" value="play" />
+                {% elif status == "playing" %}
+                    <input type="submit" name="submit" value="pause" />
+                {% endif %}
             </form>
         </div><!-- /content -->
-    <!--     <div data-role="panel" data-display="push" data-theme="b" id="nav-panel"> -->
-    <!--         <ul data-role="listview"> -->
-    <!--             <li data-icon="delete"><a href="#" data-rel="close">Close menu</a></li> -->
-    <!--                 <li><a href="#panel-responsive-page2">New</a></li> -->
-    <!--                 <li><a href="#panel-responsive-page2">New</a></li> -->
-    <!--                 <li><a href="#panel-responsive-page2">New</a></li> -->
-    <!--         </ul> -->
-    <!--     </div><1!-- /panel --1> -->
+        <div data-role="panel" data-display="push" data-theme="b" id="nav-panel">
+            <ul data-role="listview">
+                <li data-icon="delete"><a href="#" data-rel="close">Close menu</a></li>
+                {{ stations_songs|safe }}
+            </ul>
+        </div><!-- /panel -->
     <!--     <div data-role="panel" data-position="right" data-display="reveal" data-theme="a" id="add-form"> -->
     <!--         <form class="userform"> -->
     <!--             <h2>Login</h2> -->
